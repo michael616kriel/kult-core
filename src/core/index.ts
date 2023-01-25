@@ -1,4 +1,4 @@
-export class Core {
+export class KultCore {
   static routes: {
     method: string;
     path: string;
@@ -15,7 +15,7 @@ export class Core {
     func: Function;
   }[] = [];
   static registerController(name: string, func: Function) {
-    Core.controllers.push({
+    KultCore.controllers.push({
       name,
       func,
     });
@@ -27,7 +27,7 @@ export class Core {
     name: string,
     callback: Function
   ) {
-    Core.routes.push({
+    KultCore.routes.push({
       path,
       controller,
       callback,
@@ -37,34 +37,34 @@ export class Core {
   }
 
   static registerPlugin(name: string, func: Function) {
-    Core.plugins.push({
+    KultCore.plugins.push({
       name,
       func,
     });
   }
 
   static getPlugins() {
-    return Core.plugins;
+    return KultCore.plugins;
   }
 
   static getRoutes() {
-    return Core.routes;
+    return KultCore.routes;
   }
 
   static getControllers() {
-    return Core.controllers;
+    return KultCore.controllers;
   }
 }
 
-export const Controller = () => {
+export const KultController = () => {
   return (target: Function) => {
-    Core.registerController(target.name, target);
+    KultCore.registerController(target.name, target);
   };
 };
 
-export const NovaPlugin = (name: string) => {
+export const KultPlugin = (name: string) => {
   return (target: Function) => {
-    Core.registerPlugin(name, target);
+    KultCore.registerPlugin(name, target);
   };
 };
 
@@ -74,7 +74,7 @@ export const Post = (path: string) => {
     memberName: string,
     propertyDescriptor: PropertyDescriptor
   ) => {
-    Core.registerRoute(
+    KultCore.registerRoute(
       'POST',
       path,
       target.constructor.name,
@@ -90,7 +90,7 @@ export const Get = (path: string) => {
     memberName: string,
     propertyDescriptor: PropertyDescriptor
   ) => {
-    Core.registerRoute(
+    KultCore.registerRoute(
       'GET',
       path,
       target.constructor.name,
@@ -106,7 +106,7 @@ export const Put = (path: string) => {
     memberName: string,
     propertyDescriptor: PropertyDescriptor
   ) => {
-    Core.registerRoute(
+    KultCore.registerRoute(
       'PUT',
       path,
       target.constructor.name,
@@ -122,7 +122,7 @@ export const Delete = (path: string) => {
     memberName: string,
     propertyDescriptor: PropertyDescriptor
   ) => {
-    Core.registerRoute(
+    KultCore.registerRoute(
       'DELETE',
       path,
       target.constructor.name,

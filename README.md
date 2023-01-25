@@ -60,9 +60,9 @@ export default HelloController;
 ### Create a plugin:
 /src/plugins/logger/index.ts
 ```typescript
-import { NovaPlugin } from '@kult/core';
+import { KultPlugin } from '@kult/core';
 
-@NovaPlugin('Logger')
+@KultPlugin('Logger')
 export default class Logger {
   constructor() {
     // Do something here...

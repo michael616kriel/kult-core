@@ -3,7 +3,7 @@ import { Application } from 'core/application';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import { getProjectRoot } from 'utils/helpers';
-import { Core } from './decorators';
+import { KultCore } from '.';
 
 export type Plugin = (conext: Application) => void;
 
@@ -25,7 +25,7 @@ export class PluginManager {
 
   displayPlugins() {
     console.log(chalk.blue(chalk.bold('Plugins:')));
-    const plugins = Core.getPlugins();
+    const plugins = KultCore.getPlugins();
     if (!plugins || !plugins.length) {
       console.log(chalk.white('no plugins installed'));
     }
@@ -42,7 +42,7 @@ export class PluginManager {
   async startPlugins() {
     await this.loadPlugins();
     this.displayPlugins();
-    const plugins = Core.getPlugins();
+    const plugins = KultCore.getPlugins();
     for (const plugin of plugins) {
       this.createPluginInstance(plugin.func, this.application);
     }

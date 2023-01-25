@@ -5,7 +5,7 @@ import { Context, default as Koa } from 'koa';
 import Router from 'koa-router';
 import { join } from 'path';
 import { getProjectRoot, loadConfig } from 'utils/helpers';
-import { Core } from './decorators';
+import { KultCore } from '.';
 
 export type ServerManagerOptions = {
   port: number;
@@ -37,7 +37,7 @@ export class ServerManager {
     await files.forEach(async (file) => {
       (await import(join(root, './app/controllers', file))).default;
     });
-    const routes = Core.getRoutes();
+    const routes = KultCore.getRoutes();
     for (const route of routes) {
       const { path, method, callback } = route;
       const action = async (ctx: Context) => {
@@ -66,7 +66,7 @@ export class ServerManager {
 
   displayRoutes() {
     console.log(chalk.blue(chalk.bold('Routes:')));
-    const routes = Core.getRoutes();
+    const routes = KultCore.getRoutes();
     for (const route of routes) {
       const { path, method, controller, name } = route;
       console.log(chalk.white(`- [${method}] ${path} ${controller}.${name}`));
