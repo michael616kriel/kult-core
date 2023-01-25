@@ -28,8 +28,19 @@ npm i @kult/core @kult/cli
 
 ## Usage
 
-### Create a application:
-/src/index.ts
+
+### Project folder structure
+- `src/app`
+  - `/models`
+  - `/controllers`
+- `src/config`
+  - `server.ts`
+  - `config.ts`
+- `src/plugins`
+- `src/index.ts`
+
+### Application:
+
 ```typescript
 import { Application } from '@kult/core';
 
@@ -37,51 +48,56 @@ const app = new Application();
 app.start();
 ```
  
-### Create a controller:
-/src/app/controllers/hello.controller.ts
+### Controllers:
+
 ```typescript
-import { KultController, Get, Post, Put, Delete } from '@kult/core';
+import { KultController, Get, Application, ControllerBase, Context } from '@kult/core';
 
 @KultController()
-class HelloController {
+class UserController extends ControllerBase {
+
+  constructor(app: Application) {
+    super(app);
+  }
+
   @Get('/user')
-  get() {
+  get(ctx: Context) {
     return 'Hello World';
   }
 
-  @Post('/user')
-  post() {
+  @Post('/user/update')
+  post(ctx: Context) {
     return 'Hello World';
   }
 
-  @Put('/user')
-  put() {
+  @Put('/user/create')
+  put(ctx: Context) {
     return 'Hello World';
   }
 
-  @Delete('/user')
-  delete() {
+  @Delete('/user/remove')
+  delete(ctx: Context) {
     return 'Hello World';
   }
 }
 
-export default HelloController;
+export default UserController;
 ```
 
 ### Create a plugin:
-/src/plugins/logger/index.ts
+
 ```typescript
-import { KultPlugin } from '@kult/core';
+import { Application, KultPlugin, PluginBase } from '@kult/core';
 
 @KultPlugin('Logger')
-export default class Logger {
-  constructor() {
-    // Do something here...
+export default class Logger extends PluginBase {
+  constructor(app: Application) {
+    super(app)
   }
 }
 ```
 
-## Environment Variables
+### Environment Variables
 
 Server:
 ```
@@ -96,6 +112,64 @@ DATABASE_PORT=5444
 DATABASE_USERNAME='admin'
 DATABASE_PASWWORD='admin'
 DATABASE_DATABASE='development'
+```
+
+### Database Models
+
+```typescript title="src/app/model/user.model.ts"
+import { Column, Entity } from 'typeorm';
+
+@Entity()
+export default class User {
+  @Column({ primary: true })
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  filename: string;
+
+  @Column()
+  views: number;
+
+  @Column()
+  isPublished: boolean;
+}
+```
+
+### Model Respositories
+
+```typescript title="src/app/controllers/user.controller.ts"
+import {
+  KultController,
+  Get,
+  Application,
+  ControllerBase,
+  Context,
+} from '@kult/core';
+import User from '../models/user.model';
+
+@KultController()
+class UserController extends ControllerBase {
+
+  constructor(app: Application) {
+    super(app);
+  }
+
+  @Get('/user')
+  async get(ctx: Context) {
+    const { datasource } = this.app.database;
+    const users = await datasource?.getRepository(User).find();
+    return users;
+  }
+  
+}
+
+export default UserController;
 ```
 
 ## Running
