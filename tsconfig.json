@@ -16,7 +16,9 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "declaration": true,
+    "emitDecoratorMetadata": true,
     "paths": {
+      "*": ["*"],
       "core/*": ["core/*"],
       "utils/*": ["utils/*"]
     }

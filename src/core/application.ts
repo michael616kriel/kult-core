@@ -1,22 +1,22 @@
-import { DatabaseManager } from 'core/database_manager';
-import { PluginManager } from 'core/plugin_manager';
-import { ServerManager } from 'core/server_manager';
+import { Database } from 'core/database';
+import { Plugins } from 'core/plugins';
+import { Server } from 'core/server';
 import figlet from 'figlet';
 
 export class Application {
-  server_manager: ServerManager;
-  plugin_manager: PluginManager;
-  database_manager: DatabaseManager;
+  server: Server;
+  plugins: Plugins;
+  database: Database;
 
   constructor() {
-    this.database_manager = new DatabaseManager();
-    this.server_manager = new ServerManager(this);
-    this.plugin_manager = new PluginManager(this);
+    this.database = new Database();
+    this.server = new Server(this);
+    this.plugins = new Plugins(this);
   }
 
   start() {
     console.log(figlet.textSync('KULT'));
-    this.plugin_manager.startPlugins();
-    this.server_manager.listen();
+    this.plugins.startPlugins();
+    this.server.listen();
   }
 }

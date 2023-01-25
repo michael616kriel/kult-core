@@ -5,9 +5,14 @@ import { join } from 'path';
 import { getProjectRoot } from 'utils/helpers';
 import { KultCore } from '.';
 
-export type Plugin = (conext: Application) => void;
+export class PluginBase {
+  app: Application;
+  constructor(app: Application) {
+    this.app = app;
+  }
+}
 
-export class PluginManager {
+export class Plugins {
   application: Application;
 
   constructor(application: Application) {
@@ -19,7 +24,7 @@ export class PluginManager {
     const pluginPaths = join(root, './plugins');
     const files = await readdirSync(pluginPaths);
     await files.forEach(async (folder) => {
-      (await import(join(pluginPaths, `${folder}/index.ts`))).default;
+      (await import(join(pluginPaths, folder))).default;
     });
   }
 

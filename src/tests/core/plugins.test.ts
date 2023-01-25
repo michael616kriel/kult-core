@@ -10,18 +10,16 @@ jest.mock('utils/helpers', () => {
   };
 });
 
-describe('Application', () => {
+describe('Plugins', () => {
   const application = new Application();
-  it('has all required methods', async () => {
-    expect(typeof application.start).toBe('function');
-  });
-  it('creates an instance of Server', async () => {
-    expect(typeof application.server).toBe('object');
-  });
   it('creates an instance of Plugins', async () => {
     expect(typeof application.plugins).toBe('object');
   });
-  it('creates an instance of Database', async () => {
-    expect(typeof application.database).toBe('object');
+  it('has all required methods', async () => {
+    expect(typeof application.plugins.loadPlugins).toBe('function');
+    expect(typeof application.plugins.startPlugins).toBe('function');
+  });
+  it('has all required properties', async () => {
+    expect(typeof application.plugins.application).toBe('object');
   });
 });

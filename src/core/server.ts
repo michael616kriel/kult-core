@@ -4,29 +4,27 @@ import { readdirSync } from 'fs';
 import { Context, default as Koa } from 'koa';
 import Router from 'koa-router';
 import { join } from 'path';
+import { ServerOptions } from 'types';
 import { getProjectRoot, loadConfig } from 'utils/helpers';
 import { KultCore } from '.';
 
-export type ServerManagerOptions = {
-  port: number;
-};
 
-export class ServerManager {
+export class Server {
   application: Application;
   server: Koa;
   router: Router;
-  options: ServerManagerOptions;
+  options: ServerOptions;
 
   constructor(application: Application) {
     this.application = application;
-    this.options = {} as ServerManagerOptions;
+    this.options = {} as ServerOptions;
     this.server = new Koa();
     this.router = new Router();
     this.initialize();
   }
 
   async initialize() {
-    const config = await loadConfig<ServerManagerOptions>('server');
+    const config = await loadConfig<ServerOptions>('server');
     this.options = config;
   }
 
@@ -35,13 +33,13 @@ export class ServerManager {
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
     await files.forEach(async (file) => {
-      (await import(join(root, './app/controllers', file))).default;
+      (await import(join(controllerPaths, file))).default;
     });
     const routes = KultCore.getRoutes();
     for (const route of routes) {
       const { path, method, callback } = route;
       const action = async (ctx: Context) => {
-        ctx.body = await callback(ctx);
+        ctx.body = await callback(ctx, this.application);
       };
       switch (method) {
         case 'GET':

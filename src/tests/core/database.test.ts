@@ -1,8 +1,8 @@
 import { Application } from 'core/application';
-import 'core/database_manager';
+import 'core/database';
 import 'utils/helpers';
 
-jest.mock('core/database_manager')
+jest.mock('core/database')
 jest.mock('utils/helpers', () => {
   return {
     getProjectRoot: () => '/src',
@@ -12,10 +12,10 @@ jest.mock('utils/helpers', () => {
 
 describe('Database', () => {
   const application = new Application();
-  it('creates an instance of DatabaseManager', async () => {
-    expect(typeof application.database_manager).toBe('object');
+  it('creates an instance of Database', async () => {
+    expect(typeof application.database).toBe('object');
   });
   it('has all required methods', async () => {
-    expect(typeof application.database_manager.initialize).toBe('function');
+    expect(typeof application.database.initialize).toBe('function');
   });
 });
