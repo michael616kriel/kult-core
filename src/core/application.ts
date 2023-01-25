@@ -15,7 +15,7 @@ export class Application {
   }
 
   start() {
-    console.log(figlet.textSync('Nova'));
+    console.log(figlet.textSync('KULT'));
     this.plugin_manager.startPlugins();
     this.server_manager.listen();
   }
