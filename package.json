@@ -13,7 +13,7 @@
     "dev": "npx nodemon",
     "build": "rimraf ./build && yarn tsc",
     "test": "jest",
-    "publish": "npm version patch && npm publish --access public"
+    "npm-publish": "npm version patch && npm publish --access public"
   },
   "keywords": [],
   "author": "Michael Kriel <michael616kriel@gmail.com>",
