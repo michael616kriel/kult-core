@@ -26,13 +26,13 @@ import { Application } from '@kult/core';
 const app = new Application();
 app.start();
 ```
-
+ 
 ### Create a controller:
 /src/app/controllers/hello.controller.ts
 ```typescript
-import { Controller, Get, Post, Put, Delete } from '@kult/core';
+import { KultController, Get, Post, Put, Delete } from '@kult/core';
 
-@Controller()
+@KultController()
 class HelloController {
   @Get('/user')
   get() {
