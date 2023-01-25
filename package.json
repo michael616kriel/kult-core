@@ -1,5 +1,5 @@
 {
-  "name": "@nova/core",
+  "name": "@kult/core",
   "version": "0.0.1",
   "description": "",
   "main": "build/index.js",
@@ -12,19 +12,20 @@
     "start": "npm run build && node build/index.js",
     "dev": "npx nodemon",
     "build": "rimraf ./build && yarn tsc",
-    "test": "jest"
+    "test": "jest",
+    "publish": "npm publish --access public"
   },
   "keywords": [],
   "author": "Michael Kriel <michael616kriel@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/michael616kriel/nova-core.git"
+    "url": "https://github.com/michael616kriel/kult-core.git"
   },
   "bugs": {
-    "url": "https://github.com/michael616kriel/nova-core/issues"
+    "url": "https://github.com/michael616kriel/kult-core/issues"
   },
-  "homepage": "https://github.com/michael616kriel/nova-core",
+  "homepage": "https://github.com/michael616kriel/kult-core",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
