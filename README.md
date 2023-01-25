@@ -119,3 +119,16 @@ NPM:
 ```
 npm run build
 ```
+
+## Built Using <a name = "built_using"></a>
+
+- [KoaJs](https://koajs.com/) 
+- [TypeOrm](https://typeorm.io/) 
+- [NodeJs](https://nodejs.org/en/) 
+- [TypeScript](https://www.typescriptlang.org/) 
+
+## Authors <a name = "authors"></a>
+
+- [@michael616kriel](https://github.com/michael616kriel) - Idea & Initial work
+
+See also the list of [contributors](https://github.com/michael616kriel/kult-core/contributors) who participated in this project.
