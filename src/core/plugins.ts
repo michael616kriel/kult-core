@@ -2,8 +2,9 @@ import chalk from 'chalk';
 import { Application } from 'core/application';
 import { readdirSync } from 'fs';
 import { join } from 'path';
-import { getProjectRoot } from 'utils/helpers';
-import { KultCore } from '.';
+import { PluginsOptions } from 'types';
+import { getProjectRoot, loadConfig } from 'utils/helpers';
+import { getPluginMetadata, PluginMetaType } from './controllers';
 
 export class PluginBase {
   app: Application;
@@ -14,42 +15,65 @@ export class PluginBase {
 
 export class Plugins {
   application: Application;
+  plugins: { instance: PluginBase; metadata: PluginMetaType }[];
 
   constructor(application: Application) {
     this.application = application;
+    this.plugins = [];
   }
 
   async loadPlugins() {
+    // load plugins from node_modules
+    const config = await loadConfig<PluginsOptions>('plugins');
+    await config.plugins.forEach(async (moduleName) => {
+      const pluginModule = (await import(moduleName)).default;
+      const instance = this.createPluginInstance(
+        pluginModule,
+        this.application
+      );
+      const metadata = getPluginMetadata(instance);
+      this.plugins.push({
+        instance,
+        metadata,
+      });
+    });
+
+    // load plugins from project
     const root = getProjectRoot();
     const pluginPaths = join(root, './plugins');
     const files = await readdirSync(pluginPaths);
     await files.forEach(async (folder) => {
-      (await import(join(pluginPaths, folder))).default;
+      const pluginModule = (await import(join(pluginPaths, folder))).default;
+      const instance = this.createPluginInstance(
+        pluginModule,
+        this.application
+      );
+      const metadata = getPluginMetadata(instance);
+      this.plugins.push({
+        instance,
+        metadata,
+      });
     });
   }
 
   displayPlugins() {
     console.log(chalk.blue(chalk.bold('Plugins:')));
-    const plugins = KultCore.getPlugins();
+    const plugins = this.plugins;
     if (!plugins || !plugins.length) {
       console.log(chalk.white('no plugins installed'));
     }
     for (const plugin of plugins) {
-      console.log(chalk.white(`- ${plugin.name}`));
+      console.log(chalk.white(`- ${plugin.metadata.name}`));
     }
     console.log('');
   }
 
-  createPluginInstance(func: Function, params?: any) {
-    return new (Function.prototype.bind.apply(func, params))();
+  createPluginInstance(target: any, ...args: any) {
+    return new target(...args);
   }
 
   async startPlugins() {
     await this.loadPlugins();
     this.displayPlugins();
-    const plugins = KultCore.getPlugins();
-    for (const plugin of plugins) {
-      this.createPluginInstance(plugin.func, this.application);
-    }
   }
 }

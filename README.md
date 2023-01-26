@@ -110,7 +110,7 @@ DATABASE_TYPE='postgres'
 DATABASE_HOST='localhost'
 DATABASE_PORT=5444
 DATABASE_USERNAME='admin'
-DATABASE_PASWWORD='admin'
+DATABASE_PASSWORD='admin'
 DATABASE_DATABASE='development'
 ```
 
@@ -153,7 +153,7 @@ import {
 } from '@kult/core';
 import User from '../models/user.model';
 
-@KultController()
+@KultController('/users')
 class UserController extends ControllerBase {
 
   constructor(app: Application) {
@@ -161,7 +161,7 @@ class UserController extends ControllerBase {
   }
 
   @Get('/user')
-  async get(ctx: Context) {
+  async find(ctx: Context) {
     const { datasource } = this.app.database;
     const users = await datasource?.getRepository(User).find();
     return users;

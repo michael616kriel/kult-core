@@ -8,6 +8,10 @@ export type ServerOptions = {
   port: number;
 };
 
+export type PluginsOptions = {
+  plugins: string[];
+};
+
 export type Context = KoaContext;
 export type Request = KoaRequest;
 export type Response = KoaResponse;

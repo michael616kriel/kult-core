@@ -8,4 +8,3 @@ export * from 'core/database';
 export * from 'core/env';
 export * from 'core/plugins';
 export * from 'core/server';
-export * from 'core/index';
