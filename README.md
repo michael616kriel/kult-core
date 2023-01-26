@@ -53,7 +53,7 @@ app.start();
 ```typescript
 import { KultController, Get, Application, ControllerBase, Context } from '@kult/core';
 
-@KultController()
+@KultController('/users')
 class UserController extends ControllerBase {
 
   constructor(app: Application) {
@@ -61,7 +61,7 @@ class UserController extends ControllerBase {
   }
 
   @Get('/user')
-  get(ctx: Context) {
+  find(ctx: Context) {
     return 'Hello World';
   }
 
