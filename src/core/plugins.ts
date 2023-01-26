@@ -25,12 +25,8 @@ export class Plugins {
   async loadPlugins() {
     // load plugins from node_modules
     const config = await loadConfig<PluginsOptions>('plugins');
-    await config.plugins.forEach(async (moduleName) => {
-      const pluginModule = (await import(moduleName)).default;
-      const instance = this.createPluginInstance(
-        pluginModule,
-        this.application
-      );
+    await config.plugins.forEach(async (plugin) => {
+      const instance = this.createPluginInstance(plugin, this.application);
       const metadata = getPluginMetadata(instance);
       this.plugins.push({
         instance,

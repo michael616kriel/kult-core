@@ -1,3 +1,4 @@
+import { PluginBase } from 'core/plugins';
 import {
   Context as KoaContext,
   Request as KoaRequest,
@@ -9,7 +10,7 @@ export type ServerOptions = {
 };
 
 export type PluginsOptions = {
-  plugins: string[];
+  plugins: PluginBase[];
 };
 
 export type Context = KoaContext;
