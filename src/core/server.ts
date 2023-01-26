@@ -8,7 +8,6 @@ import { ServerOptions } from 'types';
 import { getProjectRoot, loadConfig } from 'utils/helpers';
 import { KultCore } from '.';
 
-
 export class Server {
   application: Application;
   server: Koa;
@@ -32,14 +31,20 @@ export class Server {
     const root = getProjectRoot();
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
-    await files.forEach(async (file) => {
-      (await import(join(controllerPaths, file))).default;
-    });
+    const controllers = await Promise.all(files.map(async (file) => {
+      const controllerModule = (await import(join(controllerPaths, file))).default;
+      const instance = this.createControllerInstance(controllerModule, this.application)
+      return {
+        name: controllerModule.name,
+        instance
+      }
+    }));
     const routes = KultCore.getRoutes();
     for (const route of routes) {
-      const { path, method, callback } = route;
+      const { path, method, name, controller } = route;
+      const controllerClass = controllers.find((item) => item.name === controller)
       const action = async (ctx: Context) => {
-        ctx.body = await callback(ctx, this.application);
+        ctx.body = await controllerClass?.instance[name](ctx, this.application);
       };
       switch (method) {
         case 'GET':
@@ -60,6 +65,10 @@ export class Server {
       }
     }
     this.server.use(this.router.routes()).use(this.router.allowedMethods());
+  }
+
+  createControllerInstance(target: any, ...args: any) {
+    return new target(...args);
   }
 
   displayRoutes() {
