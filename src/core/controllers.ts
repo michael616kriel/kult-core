@@ -1,6 +1,5 @@
-import { Application } from './application';
-import { join } from 'path';
 import 'reflect-metadata';
+import { Application } from './application';
 import { PluginBase } from './plugins';
 
 export const CONTROLLER_META_KEY = Symbol('controller');
@@ -35,11 +34,12 @@ export const KultController = (path: string) => {
 
 const actionMethod = (method: string) => {
   return (path: string) => {
+    const actionPath = !path.startsWith('/') ? `/${path}` : path;
     return (target: any, propertyKey: string) => {
       const actions =
         Reflect.getOwnMetadata(CONTROLLER_ACTION_META_KEY, target) || [];
       actions.push({
-        path,
+        path: actionPath,
         action: propertyKey,
         method,
       });
