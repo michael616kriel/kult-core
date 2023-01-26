@@ -11,16 +11,20 @@ import { getControllerMetadata } from './controllers';
 export class Server {
   application: Application;
   server: Koa;
-  router: Router;
   options: ServerOptions;
-  routes: { path: string; action: string; method: string, controller: string }[]
+  routes: {
+    path: string;
+    action: string;
+    method: string;
+    controller: string;
+    controllerPath: string;
+  }[];
 
   constructor(application: Application) {
     this.application = application;
     this.options = {} as ServerOptions;
     this.server = new Koa();
-    this.router = new Router();
-    this.routes = []
+    this.routes = [];
     this.initialize();
   }
 
@@ -33,44 +37,57 @@ export class Server {
     const root = getProjectRoot();
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
-    const controllers = await Promise.all(files.map(async (file) => {
-      const controllerModule = (await import(join(controllerPaths, file))).default;
-      const instance = this.createControllerInstance(controllerModule, this.application)
-      const metadata = getControllerMetadata(instance)
-      return {
-        metadata,
-        instance
-      }
-    }));
-    for(const controller of controllers) {
-      for(const action of controller.metadata.actions) {
-        const controllerAction = async (ctx: Context) => {
-          ctx.body = await controller?.instance[action.action](ctx, this.application);
+    const controllers = await Promise.all(
+      files.map(async (file) => {
+        const controllerModule = (await import(join(controllerPaths, file)))
+          .default;
+        const instance = this.createControllerInstance(
+          controllerModule,
+          this.application
+        );
+        const metadata = getControllerMetadata(instance);
+        return {
+          metadata,
+          instance,
         };
-        this.routes.push({
-          ...action,
-          controller: controller.metadata.name
-        })
+      })
+    );
+    for (const controller of controllers) {
+      const router = new Router({
+        prefix: controller.metadata.path,
+      });
+      for (const action of controller.metadata.actions) {
+        const controllerAction = async (ctx: Context) => {
+          ctx.body = await controller?.instance[action.action](
+            ctx,
+            this.application
+          );
+        };
         switch (action.method) {
           case 'GET':
-            this.router.get(action.path, controllerAction);
+            router.get(action.path, controllerAction);
             break;
           case 'POST':
-            this.router.post(action.path, controllerAction);
+            router.post(action.path, controllerAction);
             break;
           case 'DELETE':
-            this.router.delete(action.path, controllerAction);
+            router.delete(action.path, controllerAction);
             break;
           case 'PUT':
-            this.router.put(action.path, controllerAction);
+            router.put(action.path, controllerAction);
             break;
           case 'PATCH':
-            this.router.patch(action.path, controllerAction);
+            router.patch(action.path, controllerAction);
             break;
         }
+        this.routes.push({
+          ...action,
+          controller: controller.metadata.name,
+          controllerPath: controller.metadata.path,
+        });
       }
+      this.server.use(router.routes()).use(router.allowedMethods());
     }
-    this.server.use(this.router.routes()).use(this.router.allowedMethods());
   }
 
   createControllerInstance(target: any, ...args: any) {
@@ -80,8 +97,12 @@ export class Server {
   displayRoutes() {
     console.log(chalk.blue(chalk.bold('Routes:')));
     for (const route of this.routes) {
-      const { path, method, controller, action } = route;
-      console.log(chalk.white(`- [${method}] ${path} ${controller}.${action}`));
+      const { path, method, controller, action, controllerPath } = route;
+      console.log(
+        chalk.white(
+          `- [${method}] ${join(controllerPath, path)} ${controller}.${action}`
+        )
+      );
     }
     console.log('');
   }

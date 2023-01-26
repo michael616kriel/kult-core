@@ -21,10 +21,11 @@ export const KultPlugin = (name: string) => {
 
 export const KultController = (path: string) => {
   return (constructor: Function) => {
+    const controllerPath = !path.startsWith('/') ? `/${path}` : path;
     return Reflect.defineMetadata(
       CONTROLLER_META_KEY,
       {
-        path,
+        path: controllerPath,
         name: constructor.name,
       },
       constructor.prototype
@@ -70,7 +71,7 @@ export const getControllerMetadata = (
     ...controllerMeta,
     actions: actionMeta.map((meta: any) => ({
       ...meta,
-      path: join(controllerMeta.path, meta.path),
+      path: meta.path,
     })),
   } as ControllerMetaType;
 };
