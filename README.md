@@ -35,7 +35,8 @@ npm i @kult/core @kult/cli
   - `/controllers`
 - `src/config`
   - `server.ts`
-  - `config.ts`
+  - `database.ts`
+  - `plugins.ts`
 - `src/plugins`
 - `src/index.ts`
 
