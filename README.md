@@ -60,22 +60,22 @@ class UserController extends ControllerBase {
     super(app);
   }
 
-  @Get('/user')
+  @Get('/find')
   find(ctx: Context) {
     return 'Hello World';
   }
 
-  @Post('/user/update')
+  @Post('/update')
   post(ctx: Context) {
     return 'Hello World';
   }
 
-  @Put('/user/create')
+  @Put('/create')
   put(ctx: Context) {
     return 'Hello World';
   }
 
-  @Delete('/user/remove')
+  @Delete('/remove')
   delete(ctx: Context) {
     return 'Hello World';
   }
@@ -160,7 +160,7 @@ class UserController extends ControllerBase {
     super(app);
   }
 
-  @Get('/user')
+  @Get('/find')
   async find(ctx: Context) {
     const { datasource } = this.app.database;
     const users = await datasource?.getRepository(User).find();
