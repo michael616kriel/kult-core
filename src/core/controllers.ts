@@ -69,10 +69,11 @@ export const getControllerMetadata = (
   const actionMeta = Reflect.getMetadata(CONTROLLER_ACTION_META_KEY, target);
   return {
     ...controllerMeta,
-    actions: actionMeta.map((meta: any) => ({
-      ...meta,
-      path: meta.path,
-    })),
+    actions:
+      actionMeta?.map((meta: any) => ({
+        ...meta,
+        path: meta.path,
+      })) || [],
   } as ControllerMetaType;
 };
 

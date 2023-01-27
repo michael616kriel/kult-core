@@ -6,7 +6,7 @@ import Router from 'koa-router';
 import { join } from 'path';
 import { ServerOptions } from 'types';
 import { getProjectRoot, loadConfig } from 'utils/helpers';
-import { getControllerMetadata } from './controllers';
+import { ControllerBase, getControllerMetadata } from './controllers';
 
 export class Server {
   application: Application;
@@ -19,8 +19,10 @@ export class Server {
     controller: string;
     controllerPath: string;
   }[];
+  controllers: { metadata: any; instance: ControllerBase }[];
 
   constructor(application: Application) {
+    this.controllers = []
     this.application = application;
     this.options = {} as ServerOptions;
     this.server = new Koa();
@@ -37,6 +39,7 @@ export class Server {
     const root = getProjectRoot();
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
+    
     const controllers = await Promise.all(
       files.map(async (file) => {
         const controllerModule = (await import(join(controllerPaths, file)))
@@ -52,6 +55,9 @@ export class Server {
         };
       })
     );
+
+    this.controllers = controllers
+
     for (const controller of controllers) {
       const router = new Router({
         prefix: controller.metadata.path,
