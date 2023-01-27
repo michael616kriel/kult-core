@@ -199,6 +199,9 @@ npm run build
   - [Plugin template](https://github.com/michael616kriel/kult-plugin-template)
   - [Project template](https://github.com/michael616kriel/kult-template)
   - [Todo application](https://github.com/michael616kriel/kult-todo-example)
+
+## Community
+  - [Discord](https://discord.gg/dRwGqHvE)
  
 ## Built Using <a name = "built_using"></a>
 
