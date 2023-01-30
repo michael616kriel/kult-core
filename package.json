@@ -1,6 +1,6 @@
 {
   "name": "@kult/core",
-  "version": "0.0.31",
+  "version": "0.0.0-development",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -13,7 +13,7 @@
     "dev": "npx nodemon",
     "build": "rimraf ./build && yarn tsc",
     "test": "jest",
-    "npm-publish": "npm version patch && npm publish --access public"
+    "semantic-release": "semantic-release"
   },
   "keywords": [],
   "author": "Michael Kriel <michael616kriel@gmail.com>",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
+    "@semantic-release/npm": "^9.0.2",
     "@types/figlet": "^1.5.5",
     "@types/jest": "^29.2.6",
     "@types/koa": "^2.13.5",
@@ -48,7 +49,8 @@
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.2",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "semantic-release": "^20.1.0"
   },
   "dependencies": {
     "@koa/cors": "^4.0.0",
