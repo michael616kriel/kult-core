@@ -1,12 +1,13 @@
 import chalk from 'chalk';
-import { Application } from 'core/application';
 import { readdirSync } from 'fs';
-import { Context, default as Koa } from 'koa';
+import { Context, default as Koa, Next } from 'koa';
 import Router from 'koa-router';
 import { join } from 'path';
 import { ServerOptions } from 'types';
-import { getProjectRoot, loadConfig } from 'utils/helpers';
+import { getProjectRoot, loadConfig } from '../utils/helpers';
+import { Application, ApplicationOptions } from './application';
 import { ControllerBase, getControllerMetadata } from './controllers';
+import cors from '@koa/cors';
 
 export class Server {
   application: Application;
@@ -21,8 +22,8 @@ export class Server {
   }[];
   controllers: { metadata: any; instance: ControllerBase }[];
 
-  constructor(application: Application) {
-    this.controllers = []
+  constructor(application: Application, options?: ApplicationOptions) {
+    this.controllers = [];
     this.application = application;
     this.options = {} as ServerOptions;
     this.server = new Koa();
@@ -32,14 +33,17 @@ export class Server {
 
   async initialize() {
     const config = await loadConfig<ServerOptions>('server');
+    const corsConfig = await loadConfig<cors.Options>('cors');
     this.options = config;
+
+    this.server.use(cors(corsConfig));
   }
 
   async setupControllers() {
     const root = getProjectRoot();
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
-    
+
     const controllers = await Promise.all(
       files.map(async (file) => {
         const controllerModule = (await import(join(controllerPaths, file)))
@@ -56,15 +60,18 @@ export class Server {
       })
     );
 
-    this.controllers = controllers
+    this.controllers = controllers;
 
     for (const controller of controllers) {
       const router = new Router({
         prefix: controller.metadata.path,
       });
       for (const action of controller.metadata.actions) {
-        const controllerAction = async (ctx: Context) => {
-          ctx.body = await controller?.instance[action.action](
+        const controllerAction = async (ctx: Context, next: Next) => {
+          await action.middleware.forEach(
+            async ({ callback }) => callback && (await callback(ctx, next))
+          );
+          ctx.body = await controller?.instance[action.property](
             ctx,
             this.application
           );
@@ -85,9 +92,14 @@ export class Server {
           case 'PATCH':
             router.patch(action.path, controllerAction);
             break;
+          case 'OPTIONS':
+            router.options(action.path, controllerAction);
+            break;
         }
         this.routes.push({
-          ...action,
+          path: action.path,
+          action: action.property,
+          method: action.method,
           controller: controller.metadata.name,
           controllerPath: controller.metadata.path,
         });

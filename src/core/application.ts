@@ -1,16 +1,20 @@
-import { Database } from 'core/database';
-import { Plugins } from 'core/plugins';
-import { Server } from 'core/server';
+import { Database } from './database';
+import { Plugins } from './plugins';
+import { Server } from './server';
 import figlet from 'figlet';
+import cors from '@koa/cors';
 
+export type ApplicationOptions = {
+  cors?: cors.Options;
+};
 export class Application {
   server: Server;
   plugins: Plugins;
   database: Database;
 
-  constructor() {
+  constructor(options?: ApplicationOptions) {
     this.database = new Database();
-    this.server = new Server(this);
+    this.server = new Server(this, options);
     this.plugins = new Plugins(this);
   }
 
