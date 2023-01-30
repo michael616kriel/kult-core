@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { getProjectRoot, loadConfig } from 'utils/helpers';
+import { getProjectRoot, loadConfig } from '../utils/helpers';
 
 export class Database {
   datasource: DataSource | null = null;

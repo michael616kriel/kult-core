@@ -1,9 +1,9 @@
 import chalk from 'chalk';
-import { Application } from 'core/application';
+import { Application } from './application';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import { PluginsOptions } from 'types';
-import { getProjectRoot, loadConfig } from 'utils/helpers';
+import { getProjectRoot, loadConfig } from '../utils/helpers';
 import { getPluginMetadata, PluginMetaType } from './controllers';
 
 export class PluginBase {
