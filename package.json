@@ -15,14 +15,6 @@
     "test": "jest",
     "semantic-release": "semantic-release"
   },
-  "release": {
-    "branches": [
-      "master"
-    ]
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "keywords": [],
   "author": "Michael Kriel <michael616kriel@gmail.com>",
   "license": "MIT",
@@ -34,6 +26,10 @@
     "url": "https://github.com/michael616kriel/kult-core/issues"
   },
   "homepage": "https://github.com/michael616kriel/kult-core",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  },
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
