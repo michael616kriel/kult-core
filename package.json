@@ -1,6 +1,6 @@
 {
   "name": "@kult/core",
-  "version": "0.0.0-development",
+  "version": "0.0.31",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
