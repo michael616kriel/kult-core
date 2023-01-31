@@ -1,7 +1,7 @@
 {
   "name": "@kult/core",
   "version": "0.0.31",
-  "description": "",
+  "description": "A NodeJs framework for building backend applications",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
