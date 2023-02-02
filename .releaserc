@@ -34,14 +34,14 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "tarballDir": "build"
+        "tarballDir": "."
       }
     ],
     [
       "@semantic-release/github",
       {
         "assets": [
-          "build/**"
+          "**"
         ]
       }
     ]

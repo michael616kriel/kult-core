@@ -5,10 +5,11 @@
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/github/issues/michael616kriel/kult-core.svg)](https://github.com/michael616kriel/kult-core/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/michael616kriel/kult-core.svg)](https://github.com/michael616kriel/kult-core/pulls)
+![CI](https://github.com/michael616kriel/kult-core/actions/workflows/ci.yml/badge.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 </div>
-
 
 Kult core is a open-source framework for developing NodeJs applications and API's.
 
@@ -17,19 +18,21 @@ Have a look at our [docs](https://michael616kriel.github.io/kult-docs/) for more
 ## Installation
 
 yarn:
+
 ```
 yarn add @kult/core @kult/cli
 ```
 
 NPM:
+
 ```
 npm i @kult/core @kult/cli
 ```
 
 ## Usage
 
-
 ### Project folder structure
+
 - `src/app`
   - `/models`
   - `/controllers`
@@ -48,15 +51,20 @@ import { Application } from '@kult/core';
 const app = new Application();
 app.start();
 ```
- 
+
 ### Controllers:
 
 ```typescript
-import { KultController, Get, Application, ControllerBase, Context } from '@kult/core';
+import {
+  KultController,
+  Get,
+  Application,
+  ControllerBase,
+  Context,
+} from '@kult/core';
 
 @KultController('/users')
 class UserController extends ControllerBase {
-
   constructor(app: Application) {
     super(app);
   }
@@ -93,7 +101,7 @@ import { Application, KultPlugin, PluginBase } from '@kult/core';
 @KultPlugin('Logger')
 export default class Logger extends PluginBase {
   constructor(app: Application) {
-    super(app)
+    super(app);
   }
 }
 ```
@@ -101,11 +109,13 @@ export default class Logger extends PluginBase {
 ### Environment Variables
 
 Server:
+
 ```
 PORT=3000
 ```
 
 Database:
+
 ```
 DATABASE_TYPE='postgres'
 DATABASE_HOST='localhost'
@@ -156,7 +166,6 @@ import User from '../models/user.model';
 
 @KultController('/users')
 class UserController extends ControllerBase {
-
   constructor(app: Application) {
     super(app);
   }
@@ -167,48 +176,55 @@ class UserController extends ControllerBase {
     const users = await datasource?.getRepository(User).find();
     return users;
   }
-  
 }
 
 export default UserController;
 ```
 
 ## Running
+
 yarn:
+
 ```
 yarn dev
 ```
 
 NPM:
+
 ```
 npm run dev
 ```
 
 ## Building
+
 yarn:
+
 ```
 yarn build
 ```
 
 NPM:
+
 ```
 npm run build
 ```
 
 ## Examples
-  - [Plugin template](https://github.com/michael616kriel/kult-plugin-template)
-  - [Project template](https://github.com/michael616kriel/kult-template)
-  - [Todo application](https://github.com/michael616kriel/kult-todo-example)
+
+- [Plugin template](https://github.com/michael616kriel/kult-plugin-template)
+- [Project template](https://github.com/michael616kriel/kult-template)
+- [Todo application](https://github.com/michael616kriel/kult-todo-example)
 
 ## Community
-  - [Discord](https://discord.gg/dRwGqHvE)
- 
+
+- [Discord](https://discord.gg/dRwGqHvE)
+
 ## Built Using <a name = "built_using"></a>
 
-- [KoaJs](https://koajs.com/) 
-- [TypeOrm](https://typeorm.io/) 
-- [NodeJs](https://nodejs.org/en/) 
-- [TypeScript](https://www.typescriptlang.org/) 
+- [KoaJs](https://koajs.com/)
+- [TypeOrm](https://typeorm.io/)
+- [NodeJs](https://nodejs.org/en/)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ## Authors <a name = "authors"></a>
 
