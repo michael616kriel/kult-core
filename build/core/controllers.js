@@ -14,9 +14,7 @@ exports.DECORATOR_META_KEY = Symbol('@kult/core/decorator');
 var DecoratorKey;
 (function (DecoratorKey) {
     DecoratorKey["ROUTE"] = "route";
-    DecoratorKey["JWT"] = "jwt";
     DecoratorKey["VALIDATION"] = "validation";
-    DecoratorKey["LOGGER"] = "logger";
     DecoratorKey["HOOK"] = "hook";
 })(DecoratorKey = exports.DecoratorKey || (exports.DecoratorKey = {}));
 // Decorator helpers

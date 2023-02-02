@@ -9,9 +9,7 @@ export declare const PLUGIN_META_KEY: unique symbol;
 export declare const DECORATOR_META_KEY: unique symbol;
 export declare enum DecoratorKey {
     ROUTE = "route",
-    JWT = "jwt",
     VALIDATION = "validation",
-    LOGGER = "logger",
     HOOK = "hook"
 }
 type MetadataItem = {

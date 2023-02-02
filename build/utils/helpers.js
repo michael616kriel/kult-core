@@ -33,7 +33,11 @@ exports.getProjectRoot = getProjectRoot;
 const loadConfig = async (type) => {
     var _a;
     const root = (0, exports.getProjectRoot)();
-    return (await (_a = (0, path_1.join)(root, './config', type), Promise.resolve().then(() => __importStar(require(_a))))).default;
+    const config = (await (_a = (0, path_1.join)(root, './config', type), Promise.resolve().then(() => __importStar(require(_a))))).default;
+    if (typeof config === 'function') {
+        return (await config());
+    }
+    return config;
 };
 exports.loadConfig = loadConfig;
 const validRequestBody = (body, schema) => {

@@ -37,12 +37,14 @@ class Database {
     async initialize() {
         const config = await (0, helpers_1.loadConfig)('database');
         const entities = await this.getEntities();
+        const modelEntities = (config.entities || []).map((schema) => new typeorm_1.EntitySchema(schema));
+        modelEntities.push(...entities);
         this.datasource = new typeorm_1.DataSource({
             ...config,
             type: config.type,
             synchronize: true,
             logging: false,
-            entities: [...entities],
+            entities: modelEntities,
         });
         this.datasource.initialize();
     }
