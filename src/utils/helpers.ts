@@ -8,7 +8,11 @@ export const loadConfig = async <T>(
   type: 'server' | 'plugins' | 'database' | 'cors' | 'logger'
 ) => {
   const root = getProjectRoot();
-  return (await import(join(root, './config', type))).default as T;
+  const config = (await import(join(root, './config', type))).default;
+  if (typeof config === 'function') {
+    return (await config()) as T;
+  }
+  return config as T;
 };
 
 type ValidationBodyStucture = {
