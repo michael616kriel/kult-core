@@ -12,10 +12,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18'
-      - name: Build
-        run: npm -g install yarn & yarn & yarn build
       - name: Setup semantic-release
-        run: npm -g install yarn @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer
+        run: npm -g install @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
