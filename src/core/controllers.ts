@@ -16,9 +16,7 @@ export const DECORATOR_META_KEY = Symbol('@kult/core/decorator');
 
 export enum DecoratorKey {
   ROUTE = 'route',
-  JWT = 'jwt',
   VALIDATION = 'validation',
-  LOGGER = 'logger',
   HOOK = 'hook',
 }
 
