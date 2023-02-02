@@ -44,30 +44,31 @@ class Plugins {
         this.plugins = [];
     }
     async loadPlugins() {
+        var _a;
         // load plugins from node_modules
         const config = await (0, helpers_1.loadConfig)('plugins');
-        await config.plugins.forEach(async (plugin) => {
-            const instance = this.createPluginInstance(plugin, this.application);
+        for (const key in config.plugins) {
+            const instance = this.createPluginInstance(config.plugins[key], this.application);
             const metadata = (0, controllers_1.getPluginMetadata)(instance);
             this.plugins.push({
                 instance,
                 metadata,
             });
-        });
+        }
         // load plugins from project
         const root = (0, helpers_1.getProjectRoot)();
         const pluginPaths = (0, path_1.join)(root, './plugins');
         const files = await (0, fs_1.readdirSync)(pluginPaths);
-        await files.forEach(async (folder) => {
-            var _a;
-            const pluginModule = (await (_a = (0, path_1.join)(pluginPaths, folder), Promise.resolve().then(() => __importStar(require(_a))))).default;
+        for (const key in files) {
+            const pluginModule = (await (_a = (0, path_1.join)(pluginPaths, files[key]), Promise.resolve().then(() => __importStar(require(_a)))))
+                .default;
             const instance = this.createPluginInstance(pluginModule, this.application);
             const metadata = (0, controllers_1.getPluginMetadata)(instance);
             this.plugins.push({
                 instance,
                 metadata,
             });
-        });
+        }
     }
     displayPlugins() {
         console.log(chalk_1.default.blue(chalk_1.default.bold('Plugins:')));
@@ -80,8 +81,8 @@ class Plugins {
         }
         console.log('');
     }
-    createPluginInstance(target, ...args) {
-        return new target(...args);
+    createPluginInstance(target, app) {
+        return new target(app);
     }
     async startPlugins() {
         await this.loadPlugins();

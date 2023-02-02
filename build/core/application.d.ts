@@ -11,5 +11,5 @@ export declare class Application {
     plugins: Plugins;
     database: Database;
     constructor(options?: ApplicationOptions);
-    start(): void;
+    start(): Promise<void>;
 }

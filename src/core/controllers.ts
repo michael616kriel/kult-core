@@ -25,7 +25,7 @@ export enum DecoratorKey {
 type MetadataItem = {
   path?: string;
   method?: string;
-  type: DecoratorKey;
+  type: DecoratorKey | string;
   property: string;
   callback?: (ctx: Koa.Context, next: Koa.Next) => void;
 };
@@ -98,7 +98,7 @@ export const KultController = (path: string) => {
   };
 };
 
-export const getPluginMetadata = (target: PluginBase): PluginMetaType => {
+export const getPluginMetadata = (target: Function): PluginMetaType => {
   const pluginMeta = Reflect.getMetadata(PLUGIN_META_KEY, target);
   return pluginMeta as PluginMetaType;
 };

@@ -1,6 +1,5 @@
 import Koa from 'koa';
 import { Application } from './application';
-import { PluginBase } from './plugins';
 export declare class ControllerBase {
     app: Application;
     constructor(app: Application);
@@ -18,7 +17,7 @@ export declare enum DecoratorKey {
 type MetadataItem = {
     path?: string;
     method?: string;
-    type: DecoratorKey;
+    type: DecoratorKey | string;
     property: string;
     callback?: (ctx: Koa.Context, next: Koa.Next) => void;
 };
@@ -40,7 +39,7 @@ export declare const Hook: (callback: (ctx: Koa.Context, next: Koa.Next) => void
 export declare const CoreHook: (options: Object) => (target: Object, property: string) => void;
 export declare const KultPlugin: (name: string) => (constructor: Function) => void;
 export declare const KultController: (path: string) => (constructor: Function) => void;
-export declare const getPluginMetadata: (target: PluginBase) => PluginMetaType;
+export declare const getPluginMetadata: (target: Function) => PluginMetaType;
 export declare const getControllerMetadata: (target: ControllerBase) => ControllerMetaType;
 export declare const Get: (path: string) => (target: Object, property: string) => void;
 export declare const Post: (path: string) => (target: Object, property: string) => void;

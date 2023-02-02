@@ -18,9 +18,11 @@ export class Application {
     this.plugins = new Plugins(this);
   }
 
-  start() {
+  async start() {
     console.log(figlet.textSync('KULT'));
-    this.plugins.startPlugins();
+    await this.server.setupControllers();
+    await this.plugins.startPlugins();
     this.server.listen();
+    
   }
 }

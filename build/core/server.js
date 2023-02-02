@@ -118,7 +118,6 @@ class Server {
         console.log('');
     }
     async listen() {
-        await this.setupControllers();
         this.displayRoutes();
         this.server.listen(this.options.port, () => {
             console.log(`${chalk_1.default.green(chalk_1.default.bold('Server started:'))} ${chalk_1.default.white(`http://localhost:${this.options.port} 🚀`)}`);

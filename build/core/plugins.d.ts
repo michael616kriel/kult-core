@@ -13,6 +13,6 @@ export declare class Plugins {
     constructor(application: Application);
     loadPlugins(): Promise<void>;
     displayPlugins(): void;
-    createPluginInstance(target: any, ...args: any): any;
+    createPluginInstance(target: any, app: Application): any;
     startPlugins(): Promise<void>;
 }

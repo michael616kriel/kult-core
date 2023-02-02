@@ -25,21 +25,27 @@ export class Plugins {
   async loadPlugins() {
     // load plugins from node_modules
     const config = await loadConfig<PluginsOptions>('plugins');
-    await config.plugins.forEach(async (plugin) => {
-      const instance = this.createPluginInstance(plugin, this.application);
+
+    for (const key in config.plugins) {
+      const instance = this.createPluginInstance(
+        config.plugins[key],
+        this.application
+      );
       const metadata = getPluginMetadata(instance);
       this.plugins.push({
         instance,
         metadata,
       });
-    });
+    }
 
     // load plugins from project
     const root = getProjectRoot();
     const pluginPaths = join(root, './plugins');
     const files = await readdirSync(pluginPaths);
-    await files.forEach(async (folder) => {
-      const pluginModule = (await import(join(pluginPaths, folder))).default;
+    
+    for (const key in files) {
+      const pluginModule = (await import(join(pluginPaths, files[key])))
+        .default;
       const instance = this.createPluginInstance(
         pluginModule,
         this.application
@@ -49,7 +55,7 @@ export class Plugins {
         instance,
         metadata,
       });
-    });
+    }
   }
 
   displayPlugins() {
@@ -64,8 +70,8 @@ export class Plugins {
     console.log('');
   }
 
-  createPluginInstance(target: any, ...args: any) {
-    return new target(...args);
+  createPluginInstance(target: any, app: Application) {
+    return new target(app);
   }
 
   async startPlugins() {

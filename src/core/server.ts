@@ -126,7 +126,6 @@ export class Server {
   }
 
   async listen() {
-    await this.setupControllers();
     this.displayRoutes();
     this.server.listen(this.options.port, () => {
       console.log(

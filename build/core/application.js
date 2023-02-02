@@ -14,9 +14,10 @@ class Application {
         this.server = new server_1.Server(this, options);
         this.plugins = new plugins_1.Plugins(this);
     }
-    start() {
+    async start() {
         console.log(figlet_1.default.textSync('KULT'));
-        this.plugins.startPlugins();
+        await this.server.setupControllers();
+        await this.plugins.startPlugins();
         this.server.listen();
     }
 }
