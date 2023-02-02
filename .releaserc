@@ -20,6 +20,10 @@
           {
             "type": "style",
             "release": "patch"
+          },
+          {
+            "type": "fix",
+            "release": "minor"
           }
         ],
         "parserOpts": {
@@ -33,15 +37,14 @@
     [
       "@semantic-release/npm",
       {
-        "npmPublish": true,
-        "tarballDir": "."
+        "npmPublish": true
       }
     ],
     [
       "@semantic-release/github",
       {
         "assets": [
-          "./build/**"
+          "build/**"
         ]
       }
     ]
