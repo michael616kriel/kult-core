@@ -41,7 +41,7 @@
       "@semantic-release/github",
       {
         "assets": [
-          "**"
+          "./build/**"
         ]
       }
     ]
