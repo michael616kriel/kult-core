@@ -15,7 +15,7 @@ jobs:
       - name: Setup semantic-release
         run: npm -g install @semantic-release/github @semantic-release/npm @semantic-release/commit-analyzer
       - name: Build
-        run: npm run build
+        run: npm i & npm run build
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
