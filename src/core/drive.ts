@@ -7,7 +7,7 @@ import {
   writeFileSync,
 } from 'fs';
 import { join } from 'path';
-import { getProjectRoot } from 'utils/helpers';
+import { getProjectRoot } from '../utils/helpers';
 
 export class Drive {
   static remove(path: string) {

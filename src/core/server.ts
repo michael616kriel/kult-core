@@ -1,3 +1,4 @@
+import cors from '@koa/cors';
 import chalk from 'chalk';
 import { readdirSync } from 'fs';
 import { Context, default as Koa, Next } from 'koa';
@@ -5,10 +6,12 @@ import Router from 'koa-router';
 import { join } from 'path';
 import { ServerOptions } from 'types';
 import { getProjectRoot, loadConfig } from '../utils/helpers';
-import { Application, ApplicationOptions } from './application';
-import { ControllerBase, getControllerMetadata } from './controllers';
-import cors from '@koa/cors';
-
+import { Application } from './application';
+import {
+  ControllerBase,
+  ControllerMetaType,
+  getControllerMetadata,
+} from './controllers';
 export class Server {
   application: Application;
   server: Koa;
@@ -20,9 +23,9 @@ export class Server {
     controller: string;
     controllerPath: string;
   }[];
-  controllers: { metadata: any; instance: ControllerBase }[];
+  controllers: { metadata: ControllerMetaType; instance: ControllerBase }[];
 
-  constructor(application: Application, options?: ApplicationOptions) {
+  constructor(application: Application) {
     this.controllers = [];
     this.application = application;
     this.options = {} as ServerOptions;
@@ -35,15 +38,31 @@ export class Server {
     const config = await loadConfig<ServerOptions>('server');
     const corsConfig = await loadConfig<cors.Options>('cors');
     this.options = config;
-
     this.server.use(cors(corsConfig));
   }
 
-  async setupControllers() {
+  async registerControllers(controllers: typeof ControllerBase[]) {
+    const controllerInstances = await Promise.all(
+      controllers.map(async (controllerModule) => {
+        const instance = this.createControllerInstance(
+          controllerModule,
+          this.application
+        );
+        const metadata = getControllerMetadata(instance);
+        return {
+          metadata,
+          instance,
+        };
+      })
+    );
+    this.controllers.push(...controllerInstances);
+    this.mapControllerRoutes(controllerInstances);
+  }
+
+  async start() {
     const root = getProjectRoot();
     const controllerPaths = join(root, './app/controllers');
     const files = await readdirSync(controllerPaths);
-
     const controllers = await Promise.all(
       files.map(async (file) => {
         const controllerModule = (await import(join(controllerPaths, file)))
@@ -59,9 +78,13 @@ export class Server {
         };
       })
     );
+    this.controllers.push(...controllers);
+    this.mapControllerRoutes(controllers);
+  }
 
-    this.controllers = controllers;
-
+  async mapControllerRoutes(
+    controllers: { metadata: ControllerMetaType; instance: ControllerBase }[]
+  ) {
     for (const controller of controllers) {
       const router = new Router({
         prefix: controller.metadata.path,
@@ -71,6 +94,7 @@ export class Server {
           await action.middleware.forEach(
             async ({ callback }) => callback && (await callback(ctx, next))
           );
+          // @ts-ignore
           ctx.body = await controller?.instance[action.property](
             ctx,
             this.application
@@ -114,14 +138,22 @@ export class Server {
 
   displayRoutes() {
     console.log(chalk.blue(chalk.bold('Routes:')));
+    const table = [];
     for (const route of this.routes) {
       const { path, method, controller, action, controllerPath } = route;
-      console.log(
-        chalk.white(
-          `- [${method}] ${join(controllerPath, path)} ${controller}.${action}`
-        )
-      );
+      table.push({
+        path: join(controllerPath, path),
+        method,
+        controller,
+        action,
+      });
     }
+    console.table(
+      table.reduce((acc: any, { path, ...rest }) => {
+        acc[path] = rest;
+        return acc;
+      }, {})
+    );
     console.log('');
   }
 

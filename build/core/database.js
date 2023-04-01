@@ -31,22 +31,9 @@ const helpers_1 = require("../utils/helpers");
 class Database {
     constructor() {
         this.datasource = null;
+        this.entities = [];
         this.datasource = null;
-        this.initialize();
-    }
-    async initialize() {
-        const config = await (0, helpers_1.loadConfig)('database');
-        const entities = await this.getEntities();
-        const modelEntities = (config.entities || []).map((schema) => new typeorm_1.EntitySchema(schema));
-        modelEntities.push(...entities);
-        this.datasource = new typeorm_1.DataSource({
-            ...config,
-            type: config.type,
-            synchronize: true,
-            logging: false,
-            entities: modelEntities,
-        });
-        this.datasource.initialize();
+        this.entities = [];
     }
     async getEntities() {
         const root = (0, helpers_1.getProjectRoot)();
@@ -56,6 +43,24 @@ class Database {
             var _a;
             return (await (_a = (0, path_1.join)(entitiesPath, file), Promise.resolve().then(() => __importStar(require(_a))))).default;
         }));
+    }
+    registerEntities(entities) {
+        this.entities.push(...entities);
+    }
+    async start() {
+        const config = await (0, helpers_1.loadConfig)('database');
+        const entities = await this.getEntities();
+        const modelEntities = (config.entities || []).map((schema) => new typeorm_1.EntitySchema(schema));
+        this.registerEntities(entities);
+        this.registerEntities(modelEntities);
+        this.datasource = new typeorm_1.DataSource({
+            ...config,
+            type: config.type,
+            synchronize: true,
+            logging: false,
+            entities: this.entities,
+        });
+        this.datasource.initialize();
     }
 }
 exports.Database = Database;

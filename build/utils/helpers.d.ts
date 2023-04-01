@@ -1,5 +1,5 @@
 export declare const getProjectRoot: () => string;
-export declare const loadConfig: <T>(type: 'server' | 'plugins' | 'database' | 'cors' | 'logger') => Promise<T>;
+export declare const loadConfig: <T>(type: string) => Promise<T>;
 type ValidationBodyStucture = {
     [key: string]: string | number | ValidationBodyStucture;
 };

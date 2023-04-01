@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Validate = exports.Options = exports.Patch = exports.Delete = exports.Put = exports.Post = exports.Get = exports.getControllerMetadata = exports.getPluginMetadata = exports.KultController = exports.KultPlugin = exports.CoreHook = exports.Hook = exports.DecoratorKey = exports.DECORATOR_META_KEY = exports.PLUGIN_META_KEY = exports.CONTROLLER_META_KEY = exports.ControllerBase = void 0;
+exports.Validate = exports.Options = exports.Patch = exports.Delete = exports.Put = exports.Post = exports.Get = exports.getControllerMetadata = exports.getPluginMetadata = exports.Controller = exports.Plugin = exports.CoreHook = exports.Hook = exports.DecoratorKey = exports.DECORATOR_META_KEY = exports.PLUGIN_META_KEY = exports.CONTROLLER_META_KEY = exports.ControllerBase = void 0;
 const helpers_1 = require("../utils/helpers");
 class ControllerBase {
     constructor(app) {
@@ -41,15 +41,13 @@ const CoreHook = (options) => {
     };
 };
 exports.CoreHook = CoreHook;
-const KultPlugin = (name) => {
+const Plugin = (options) => {
     return (constructor) => {
-        return Reflect.defineMetadata(exports.PLUGIN_META_KEY, {
-            name,
-        }, constructor.prototype);
+        return Reflect.defineMetadata(exports.PLUGIN_META_KEY, options, constructor.prototype);
     };
 };
-exports.KultPlugin = KultPlugin;
-const KultController = (path) => {
+exports.Plugin = Plugin;
+const Controller = (path) => {
     return (constructor) => {
         const controllerPath = !path.startsWith('/') ? `/${path}` : path;
         return Reflect.defineMetadata(exports.CONTROLLER_META_KEY, {
@@ -58,7 +56,7 @@ const KultController = (path) => {
         }, constructor.prototype);
     };
 };
-exports.KultController = KultController;
+exports.Controller = Controller;
 const getPluginMetadata = (target) => {
     const pluginMeta = Reflect.getMetadata(exports.PLUGIN_META_KEY, target);
     return pluginMeta;

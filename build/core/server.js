@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
+const cors_1 = __importDefault(require("@koa/cors"));
 const chalk_1 = __importDefault(require("chalk"));
 const fs_1 = require("fs");
 const koa_1 = __importDefault(require("koa"));
@@ -34,9 +35,8 @@ const koa_router_1 = __importDefault(require("koa-router"));
 const path_1 = require("path");
 const helpers_1 = require("../utils/helpers");
 const controllers_1 = require("./controllers");
-const cors_1 = __importDefault(require("@koa/cors"));
 class Server {
-    constructor(application, options) {
+    constructor(application) {
         this.controllers = [];
         this.application = application;
         this.options = {};
@@ -50,7 +50,19 @@ class Server {
         this.options = config;
         this.server.use((0, cors_1.default)(corsConfig));
     }
-    async setupControllers() {
+    async registerControllers(controllers) {
+        const controllerInstances = await Promise.all(controllers.map(async (controllerModule) => {
+            const instance = this.createControllerInstance(controllerModule, this.application);
+            const metadata = (0, controllers_1.getControllerMetadata)(instance);
+            return {
+                metadata,
+                instance,
+            };
+        }));
+        this.controllers.push(...controllerInstances);
+        this.mapControllerRoutes(controllerInstances);
+    }
+    async start() {
         const root = (0, helpers_1.getProjectRoot)();
         const controllerPaths = (0, path_1.join)(root, './app/controllers');
         const files = await (0, fs_1.readdirSync)(controllerPaths);
@@ -65,7 +77,10 @@ class Server {
                 instance,
             };
         }));
-        this.controllers = controllers;
+        this.controllers.push(...controllers);
+        this.mapControllerRoutes(controllers);
+    }
+    async mapControllerRoutes(controllers) {
         for (const controller of controllers) {
             const router = new koa_router_1.default({
                 prefix: controller.metadata.path,
@@ -73,6 +88,7 @@ class Server {
             for (const action of controller.metadata.actions) {
                 const controllerAction = async (ctx, next) => {
                     await action.middleware.forEach(async ({ callback }) => callback && (await callback(ctx, next)));
+                    // @ts-ignore
                     ctx.body = await (controller === null || controller === void 0 ? void 0 : controller.instance[action.property](ctx, this.application));
                 };
                 switch (action.method) {
@@ -111,10 +127,20 @@ class Server {
     }
     displayRoutes() {
         console.log(chalk_1.default.blue(chalk_1.default.bold('Routes:')));
+        const table = [];
         for (const route of this.routes) {
             const { path, method, controller, action, controllerPath } = route;
-            console.log(chalk_1.default.white(`- [${method}] ${(0, path_1.join)(controllerPath, path)} ${controller}.${action}`));
+            table.push({
+                path: (0, path_1.join)(controllerPath, path),
+                method,
+                controller,
+                action,
+            });
         }
+        console.table(table.reduce((acc, { path, ...rest }) => {
+            acc[path] = rest;
+            return acc;
+        }, {}));
         console.log('');
     }
     async listen() {

@@ -1,7 +1,7 @@
 import { default as Koa } from 'koa';
 import { ServerOptions } from '../types';
-import { Application, ApplicationOptions } from './application';
-import { ControllerBase } from './controllers';
+import { Application } from './application';
+import { ControllerBase, ControllerMetaType } from './controllers';
 export declare class Server {
     application: Application;
     server: Koa;
@@ -14,12 +14,17 @@ export declare class Server {
         controllerPath: string;
     }[];
     controllers: {
-        metadata: any;
+        metadata: ControllerMetaType;
         instance: ControllerBase;
     }[];
-    constructor(application: Application, options?: ApplicationOptions);
+    constructor(application: Application);
     initialize(): Promise<void>;
-    setupControllers(): Promise<void>;
+    registerControllers(controllers: typeof ControllerBase[]): Promise<void>;
+    start(): Promise<void>;
+    mapControllerRoutes(controllers: {
+        metadata: ControllerMetaType;
+        instance: ControllerBase;
+    }[]): Promise<void>;
     createControllerInstance(target: any, ...args: any): any;
     displayRoutes(): void;
     listen(): Promise<void>;

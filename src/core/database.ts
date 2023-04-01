@@ -5,27 +5,11 @@ import { getProjectRoot, loadConfig } from '../utils/helpers';
 
 export class Database {
   datasource: DataSource | null = null;
+  entities: EntitySchema[] = [];
+
   constructor() {
     this.datasource = null;
-    this.initialize();
-  }
-
-  async initialize() {
-    const config = await loadConfig<DataSourceOptions>('database');
-    const entities = await this.getEntities();
-    const modelEntities: any[] = ((config.entities as any[]) || []).map(
-      (schema) => new EntitySchema(schema)
-    );
-    modelEntities.push(...entities);
-
-    this.datasource = new DataSource({
-      ...(config as DataSourceOptions),
-      type: config.type as any,
-      synchronize: true,
-      logging: false,
-      entities: modelEntities,
-    });
-    this.datasource.initialize();
+    this.entities = [];
   }
 
   async getEntities() {
@@ -37,5 +21,29 @@ export class Database {
         return (await import(join(entitiesPath, file))).default;
       })
     );
+  }
+
+  registerEntities(entities: EntitySchema[]) {
+    this.entities.push(...entities);
+  }
+
+  async start() {
+    const config = await loadConfig<DataSourceOptions>('database');
+    const entities = await this.getEntities();
+    const modelEntities: EntitySchema[] = (
+      (config.entities as any[]) || []
+    ).map((schema) => new EntitySchema(schema));
+
+    this.registerEntities(entities);
+    this.registerEntities(modelEntities);
+
+    this.datasource = new DataSource({
+      ...(config as DataSourceOptions),
+      type: config.type as any,
+      synchronize: true,
+      logging: false,
+      entities: this.entities,
+    });
+    this.datasource.initialize();
   }
 }

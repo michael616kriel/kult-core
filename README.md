@@ -56,14 +56,14 @@ app.start();
 
 ```typescript
 import {
-  KultController,
+  Controller,
   Get,
   Application,
   ControllerBase,
   Context,
 } from '@kult/core';
 
-@KultController('/users')
+@Controller('/users')
 class UserController extends ControllerBase {
   constructor(app: Application) {
     super(app);
@@ -96,9 +96,9 @@ export default UserController;
 ### Create a plugin:
 
 ```typescript
-import { Application, KultPlugin, PluginBase } from '@kult/core';
+import { Application, Plugin, PluginBase } from '@kult/core';
 
-@KultPlugin('Logger')
+@Plugin('Logger')
 export default class Logger extends PluginBase {
   constructor(app: Application) {
     super(app);
@@ -156,7 +156,7 @@ export default class User {
 
 ```typescript title="src/app/controllers/user.controller.ts"
 import {
-  KultController,
+  Controller,
   Get,
   Application,
   ControllerBase,
@@ -164,7 +164,7 @@ import {
 } from '@kult/core';
 import User from '../models/user.model';
 
-@KultController('/users')
+@Controller('/users')
 class UserController extends ControllerBase {
   constructor(app: Application) {
     super(app);

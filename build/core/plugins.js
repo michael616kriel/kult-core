@@ -36,6 +36,9 @@ class PluginBase {
     constructor(app) {
         this.app = app;
     }
+    async initialize() {
+        return;
+    }
 }
 exports.PluginBase = PluginBase;
 class Plugins {
@@ -45,16 +48,6 @@ class Plugins {
     }
     async loadPlugins() {
         var _a;
-        // load plugins from node_modules
-        const config = await (0, helpers_1.loadConfig)('plugins');
-        for (const key in config.plugins) {
-            const instance = this.createPluginInstance(config.plugins[key], this.application);
-            const metadata = (0, controllers_1.getPluginMetadata)(instance);
-            this.plugins.push({
-                instance,
-                metadata,
-            });
-        }
         // load plugins from project
         const root = (0, helpers_1.getProjectRoot)();
         const pluginPaths = (0, path_1.join)(root, './plugins');
@@ -64,6 +57,22 @@ class Plugins {
                 .default;
             const instance = this.createPluginInstance(pluginModule, this.application);
             const metadata = (0, controllers_1.getPluginMetadata)(instance);
+            if (metadata.controllers) {
+                this.application.server.registerControllers(metadata.controllers);
+            }
+            this.plugins.push({
+                instance,
+                metadata,
+            });
+        }
+        // load plugins from node_modules
+        const config = await (0, helpers_1.loadConfig)('plugins');
+        for (const key in config.plugins) {
+            const instance = this.createPluginInstance(config.plugins[key], this.application);
+            const metadata = (0, controllers_1.getPluginMetadata)(instance);
+            if (metadata.controllers) {
+                this.application.server.registerControllers(metadata.controllers);
+            }
             this.plugins.push({
                 instance,
                 metadata,
@@ -84,8 +93,11 @@ class Plugins {
     createPluginInstance(target, app) {
         return new target(app);
     }
-    async startPlugins() {
+    async start() {
         await this.loadPlugins();
+        for (const plugin of this.plugins) {
+            await plugin.instance.initialize();
+        }
         this.displayPlugins();
     }
 }

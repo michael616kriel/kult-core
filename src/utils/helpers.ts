@@ -5,7 +5,7 @@ export const getProjectRoot = () => {
 };
 
 export const loadConfig = async <T>(
-  type: 'server' | 'plugins' | 'database' | 'cors' | 'logger'
+  type: string
 ) => {
   const root = getProjectRoot();
   const config = (await import(join(root, './config', type))).default;

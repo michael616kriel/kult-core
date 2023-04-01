@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import { EntitySchema } from 'typeorm';
 import { Application } from './application';
 export declare class ControllerBase {
     app: Application;
@@ -32,11 +33,13 @@ export type ControllerMetaType = {
 };
 export type PluginMetaType = {
     name: string;
+    controllers?: typeof ControllerBase[];
+    models?: EntitySchema[];
 };
 export declare const Hook: (callback: (ctx: Koa.Context, next: Koa.Next) => void) => (target: Object, property: string) => void;
 export declare const CoreHook: (options: Object) => (target: Object, property: string) => void;
-export declare const KultPlugin: (name: string) => (constructor: Function) => void;
-export declare const KultController: (path: string) => (constructor: Function) => void;
+export declare const Plugin: (options: PluginMetaType) => (constructor: Function) => void;
+export declare const Controller: (path: string) => (constructor: Function) => void;
 export declare const getPluginMetadata: (target: Function) => PluginMetaType;
 export declare const getControllerMetadata: (target: ControllerBase) => ControllerMetaType;
 export declare const Get: (path: string) => (target: Object, property: string) => void;

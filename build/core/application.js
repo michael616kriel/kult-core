@@ -9,15 +9,16 @@ const plugins_1 = require("./plugins");
 const server_1 = require("./server");
 const figlet_1 = __importDefault(require("figlet"));
 class Application {
-    constructor(options) {
+    constructor() {
         this.database = new database_1.Database();
-        this.server = new server_1.Server(this, options);
+        this.server = new server_1.Server(this);
         this.plugins = new plugins_1.Plugins(this);
     }
     async start() {
         console.log(figlet_1.default.textSync('KULT'));
-        await this.server.setupControllers();
-        await this.plugins.startPlugins();
+        await this.server.start();
+        await this.plugins.start();
+        await this.database.start();
         this.server.listen();
     }
 }

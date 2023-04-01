@@ -9,7 +9,7 @@
   "scripts": {
     "tsc": "tsc -p tsconfig.json && tsc-alias",
     "start": "npm run build && node build/index.js",
-    "dev": "npx nodemon",
+    "dev": "npx nodemon -e ts --watch src --exec \"yarn build\"",
     "build": "rimraf ./build && yarn tsc",
     "test": "jest",
     "semantic-release": "semantic-release"

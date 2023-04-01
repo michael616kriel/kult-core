@@ -3,6 +3,7 @@ import { PluginMetaType } from './controllers';
 export declare class PluginBase {
     app: Application;
     constructor(app: Application);
+    initialize(): Promise<void>;
 }
 export declare class Plugins {
     application: Application;
@@ -14,5 +15,5 @@ export declare class Plugins {
     loadPlugins(): Promise<void>;
     displayPlugins(): void;
     createPluginInstance(target: any, app: Application): any;
-    startPlugins(): Promise<void>;
+    start(): Promise<void>;
 }

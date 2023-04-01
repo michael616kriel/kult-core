@@ -1,7 +1,7 @@
 import Koa from 'koa';
-import { validRequestBody } from 'utils/helpers';
+import { EntitySchema } from 'typeorm';
+import { validRequestBody } from '../utils/helpers';
 import { Application } from './application';
-import { PluginBase } from './plugins';
 
 export class ControllerBase {
   app: Application;
@@ -43,6 +43,8 @@ export type ControllerMetaType = {
 
 export type PluginMetaType = {
   name: string;
+  controllers?: typeof ControllerBase[]
+  models?: EntitySchema[]
 };
 
 // Decorator helpers
@@ -70,19 +72,17 @@ export const CoreHook = (options: Object) => {
   };
 };
 
-export const KultPlugin = (name: string) => {
+export const Plugin = (options: PluginMetaType) => {
   return (constructor: Function) => {
     return Reflect.defineMetadata(
       PLUGIN_META_KEY,
-      {
-        name,
-      },
+      options,
       constructor.prototype
     );
   };
 };
 
-export const KultController = (path: string) => {
+export const Controller = (path: string) => {
   return (constructor: Function) => {
     const controllerPath = !path.startsWith('/') ? `/${path}` : path;
     return Reflect.defineMetadata(
